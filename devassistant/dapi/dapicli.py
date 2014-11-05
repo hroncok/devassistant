@@ -9,6 +9,7 @@ import tempfile
 import urllib
 from depsolver.version import Version
 from depsolver.errors import InvalidVersion
+from depsolver import PackageInfo, Repository
 from devassistant import dapi
 from devassistant.dapi import dapver
 from devassistant.logger import logger
@@ -392,7 +393,14 @@ def _eshout(e):
     sys.stderr.write(str(e))
     sys.stderr.write('\n')
 
-def get_dependency_metadata():
+def _get_dependency_metadata():
     '''Returns list of strings with dependency metadata from Dapi'''
     link = os.path.join(_api_url(),'meta.txt')
-    return _process_req_txt(requests.get(link)).split('\n')
+    return list(filter(None, _process_req_txt(requests.get(link)).split('\n')))
+
+def _depsolver_available_repo():
+    '''Returns depsolver Repository instance with available packages from Dapi'''
+    repo = []
+    for pkg in _get_dependency_metadata():
+        repo.append(PackageInfo.from_string(pkg.rstrip(), version_factory=DapVersion.from_string))
+    return Repository(repo)
