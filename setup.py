@@ -91,7 +91,7 @@ class GUITest(GeneralTest):
 def _get_requirements(path):
     with open(path) as f:
         packages = f.read().splitlines()
-    packages = (p.strip() for p in packages if not p.startswith('#'))
+    packages = (p.strip() for p in packages if not (p.startswith('#') or p.startswith('-')))
     packages = list(filter(None, packages))
     return packages
 
@@ -101,6 +101,7 @@ def _install_requirements():
     if sys.version_info[0] < 3:
         requirements += _get_requirements('requirements-py2.txt')
 
+    requirements.append(['depsolver==0.0.2.dev1'])
     return requirements
 
 
@@ -123,6 +124,9 @@ setup(
                                        'devassistant=devassistant.cli.cli_runner:CliRunner.run',
                                        'devassistant-gui=devassistant.gui:run_gui']},
     install_requires=_install_requirements(),
+    dependency_links = [
+        'git+git://github.com/enthought/depsolver.git@6c6af30#egg=depsolver-0.0.2.dev1',
+    ],
     setup_requires = [],
     classifiers = ['Development Status :: 4 - Beta',
                    'Environment :: Console',

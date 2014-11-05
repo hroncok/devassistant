@@ -6,3 +6,4 @@ jinja2
 progress
 requests>=2.3.0
 six
+-e git+git://github.com/enthought/depsolver.git@6c6af30#egg=depsolver-0.0.2.dev1
