@@ -358,6 +358,17 @@ def get_installed_version_of(name):
         data = yaml.load(f.read(), Loader=Loader)
     return data['version']
 
+def _get_dependencies_of(name):
+    '''Returns list of dependiencies of the given installed dap or None if not installed'''
+    if name not in get_installed_daps():
+        return None
+    meta = '{d}/meta/{dap}.yaml'.format(d=_install_path(), dap=name)
+    with open(meta) as f:
+        data = yaml.load(f.read(), Loader=Loader)
+    try:
+        return data['dependencies']
+    except KeyError:
+        return []
 
 def install_dap(name, version='', update=False):
     '''Install a dap from dapi
@@ -398,4 +409,15 @@ def _depsolver_available_repo():
     repo = []
     for pkg in _get_dependency_metadata():
         repo.append(PackageInfo.from_string(pkg.rstrip(), version_factory=DapVersion.from_string))
+    return Repository(repo)
+
+def _depsolver_installed_repo():
+    '''Returns depsolver Repository instance with installed packages'''
+    repo = []
+    for dap in get_installed_daps():
+        pstring = dap + '-' + get_installed_version_of(dap)
+        deps = _get_dependencies_of(dap)
+        if deps:
+            pstring += '; depends (' + ', '.join(deps) + ')'
+        repo.append(PackageInfo.from_string(pstring, version_factory=DapVersion.from_string))
     return Repository(repo)

@@ -4,9 +4,15 @@ def compare(ver1, ver2):
     excepts valid version'''
     if ver1 == ver2: return 0
 
-    # Those two are for depsolver
+    # Those are for depsolver
+    # TODO Handle this in DapVersion instead
     if ver1 == 'None': return -1
     if ver2 == 'None': return 1
+    max1 = ver1.startswith('<depsolver.version.MaxVersion')
+    max2 = ver2.startswith('<depsolver.version.MaxVersion')
+    if max1 and max2: return 0
+    if max1: return 1
+    if max2: return -1
 
     ver1 = _cut(ver1)
     ver2 = _cut(ver2)
