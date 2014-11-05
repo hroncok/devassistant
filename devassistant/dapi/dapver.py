@@ -2,8 +2,12 @@ def compare(ver1, ver2):
     '''Version comparing, returns 0 if are the same,
     returns >0 if first is bigger, <0 if first is smaller,
     excepts valid version'''
-    if ver1 == ver2:
-        return 0
+    if ver1 == ver2: return 0
+
+    # Those two are for depsolver
+    if ver1 == 'None': return -1
+    if ver2 == 'None': return 1
+
     ver1 = _cut(ver1)
     ver2 = _cut(ver2)
     # magic multiplier
