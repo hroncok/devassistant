@@ -388,11 +388,6 @@ def install_dap(name, version='', update=False):
     except:
         pass
 
-def _eshout(e):
-    '''Prints the Exception's message to stderr'''
-    sys.stderr.write(str(e))
-    sys.stderr.write('\n')
-
 def _get_dependency_metadata():
     '''Returns list of strings with dependency metadata from Dapi'''
     link = os.path.join(_api_url(),'meta.txt')
