@@ -7,6 +7,8 @@ import glob
 import shutil
 import tempfile
 import urllib
+from depsolver.version import Version
+from depsolver.errors import InvalidVersion
 from devassistant import dapi
 from devassistant.dapi import dapver
 from devassistant.logger import logger
@@ -20,6 +22,35 @@ except:
 from devassistant.settings import DAPI_DEFAULT_API_URL
 from devassistant.settings import DAPI_DEFAULT_USER_INSTALL
 from devassistant.settings import DAPI_DEFAULT_ROOT_INSTALL
+
+
+class DapVersion(Version):
+    '''Version class wrapper for depsolver'''
+    @classmethod
+    def from_string(cls, version):
+        if dapi.Dap._meta_valid['version'].match(version):
+            return cls(version)
+        raise InvalidVersion("Invalid dap version : '%s'" % version)
+
+    def __init__(self, version):
+        self.version = version
+
+    def __str__(self):
+        return self.version
+
+    def __hash__(self):
+        return hash(str(self))
+
+    def __cmp__(self, other):
+        return dapver.compare(str(self), str(other))
+
+
+    def __eq__(self, other):
+        return str(self) == str(other)
+
+    def __lt__(self, other):
+        return dapver.compare(str(self), str(other)) < 0
+
 
 def _api_url():
     return os.environ.get('DAPI_API_URL', DAPI_DEFAULT_API_URL)
