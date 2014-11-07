@@ -421,3 +421,14 @@ def _depsolver_installed_repo():
             pstring += '; depends (' + ', '.join(deps) + ')'
         repo.append(PackageInfo.from_string(pstring, version_factory=DapVersion.from_string))
     return Repository(repo)
+
+def _depsolver_add_locals(request):
+    '''
+    For the given depsolver Request, this adds a request to install local packages.
+    It is a workaround for weird depsolver behavior.
+    WARNING: This approach has to be fixed when uninstalling packages!
+    '''
+
+    for dap in get_installed_daps():
+        request.install(Requirement.from_string(dap))
+    return request
